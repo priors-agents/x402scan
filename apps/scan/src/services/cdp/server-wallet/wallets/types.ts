@@ -1,4 +1,8 @@
-import type { Chain, SupportedChain, SupportedEVMChain } from '@/types/chain';
+import type {
+  Chain,
+  SupportedEVMChain,
+  SupportedWalletChain,
+} from '@/types/chain';
 import type z from 'zod';
 import type { getTokenBalanceSchema, sendTokensSchema } from './schemas';
 import type { SolanaAddress } from '@/types/address';
@@ -25,5 +29,5 @@ export type EvmWallets = {
 };
 
 export type Wallets = {
-  [K in SupportedChain]: ReturnType<NetworkServerWallet<K>>;
+  [K in SupportedWalletChain]: ReturnType<NetworkServerWallet<K>>;
 };

@@ -2,13 +2,13 @@ import { z } from 'zod';
 
 import { cdpFetch } from '../lib/fetch';
 import { ethereumAddressSchema, solanaAddressSchema } from '@/lib/schemas';
-import { Chain, SUPPORTED_CHAINS } from '@/types/chain';
+import { Chain, SUPPORTED_WALLET_CHAINS } from '@/types/chain';
 
 export const createOnrampUrlParamsSchema = z.object({
   redirect: z.url(),
   amount: z.number(),
   experience: z.enum(['send', 'buy']).default('buy'),
-  defaultNetwork: z.enum(SUPPORTED_CHAINS),
+  defaultNetwork: z.enum(SUPPORTED_WALLET_CHAINS),
   defaultAsset: z.literal('USDC').default('USDC'),
   fiatCurrency: z.literal('USD').default('USD'),
   tokenKey: z.string().default('onramp_token'),

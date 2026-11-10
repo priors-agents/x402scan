@@ -1,6 +1,10 @@
 import z from 'zod';
 
-import { Chain, SUPPORTED_CHAINS } from '@/types/chain';
+import {
+  Chain,
+  SUPPORTED_CHAINS,
+  SUPPORTED_WALLET_CHAINS,
+} from '@/types/chain';
 
 import { isAddress } from 'viem';
 import type { SolanaAddress } from '@/types/address';
@@ -31,6 +35,7 @@ export const chainSchema = z.enum(Chain);
 export const optionalChainSchema = chainSchema.optional();
 export const supportedChainSchema = z.enum(SUPPORTED_CHAINS);
 export const optionalSupportedChainSchema = supportedChainSchema.optional();
+export const supportedWalletChainSchema = z.enum(SUPPORTED_WALLET_CHAINS);
 
 export const timePeriodSchema = z.number().nonnegative();
 
@@ -45,5 +50,5 @@ export const timeframeSchema = z.union([
 export const sendUsdcBodySchema = z.object({
   amount: z.number(),
   address: mixedAddressSchema,
-  chain: supportedChainSchema,
+  chain: supportedWalletChainSchema,
 });

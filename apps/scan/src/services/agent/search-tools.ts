@@ -7,11 +7,11 @@ import {
   paymentRequirementsSchemaV1,
 } from '@/lib/x402';
 
-import { SUPPORTED_CHAINS } from '@/types/chain';
+import { SUPPORTED_WALLET_CHAINS } from '@/types/chain';
 
 import type { searchResourcesSchema } from '../db/resources/resource';
 import type { z } from 'zod';
-import type { SupportedChain } from '@/types/chain';
+import type { SupportedWalletChain } from '@/types/chain';
 import { convertTokenAmount } from '@/lib/token';
 import { usdc } from '@/lib/tokens/usdc';
 
@@ -23,7 +23,7 @@ interface X402ToolResponse {
   invocations: number;
   accepts: {
     maxAmountRequired: number;
-    chain: SupportedChain;
+    chain: SupportedWalletChain;
   }[];
 }
 
@@ -35,6 +35,14 @@ export async function searchX402Tools(
   const toolDefinitions: X402ToolResponse[] = [];
   for (const resource of resources) {
     if (resource.accepts) {
+      // The composer can only pay on wallet chains; other supported networks
+      // (e.g. robinhood) are dropped before the v1 parse, which rejects them.
+      const payableAccepts = resource.accepts.filter(accept =>
+        SUPPORTED_WALLET_CHAINS.includes(accept.network as SupportedWalletChain)
+      );
+      if (resource.accepts.length > 0 && payableAccepts.length === 0) {
+        continue;
+      }
       const parsedAccepts = z3
         .array(
           paymentRequirementsSchemaV1.extend({
@@ -42,7 +50,7 @@ export async function searchX402Tools(
           })
         )
         .safeParse(
-          resource.accepts.map(accept =>
+          payableAccepts.map(accept =>
             coerceAcceptForV1Schema({
               x402Version: resource.x402Version,
               accept,
@@ -61,17 +69,13 @@ export async function searchX402Tools(
         description: description,
         favicon: resource.origin.favicon,
         invocations: resource._count.toolCalls,
-        accepts: parsedAccepts.data
-          .filter(accept =>
-            SUPPORTED_CHAINS.includes(accept.network as SupportedChain)
-          )
-          .map(accept => ({
-            maxAmountRequired: convertTokenAmount(
-              BigInt(accept.maxAmountRequired),
-              usdc(accept.network as SupportedChain).decimals
-            ),
-            chain: accept.network as SupportedChain,
-          })),
+        accepts: parsedAccepts.data.map(accept => ({
+          maxAmountRequired: convertTokenAmount(
+            BigInt(accept.maxAmountRequired),
+            usdc(accept.network as SupportedWalletChain).decimals
+          ),
+          chain: accept.network as SupportedWalletChain,
+        })),
       });
     }
   }

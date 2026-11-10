@@ -13,14 +13,14 @@ import { useConnectedWallets } from '@/app/(app)/_hooks/use-connected-wallets';
 
 import { WalletChainProvider } from '../../_contexts/wallet-chain/provider';
 
-import { parseChain } from '@/app/(app)/_lib/chain/parse';
+import { supportedWalletChainSchema } from '@/lib/schemas';
 
-import type { SupportedChain } from '@/types/chain';
+import type { SupportedWalletChain } from '@/types/chain';
 
 interface Props {
   children: React.ReactNode;
   initialTab?: 'wallet' | 'deposit' | 'withdraw';
-  initialChain?: SupportedChain;
+  initialChain?: SupportedWalletChain;
   isFixed?: boolean;
   watchOnramp?: boolean;
 }
@@ -38,7 +38,9 @@ export const WalletDialog: React.FC<Props> = ({
 
   const { currentUser } = useCurrentUser();
 
-  const initialChainParam = parseChain(searchParams.get('chain'));
+  const initialChainParam = supportedWalletChainSchema.safeParse(
+    searchParams.get('chain')
+  ).data;
 
   return (
     <Dialog

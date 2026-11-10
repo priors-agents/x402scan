@@ -21,8 +21,8 @@ import { api } from '@/trpc/client';
 
 import {
   CHAIN_LABELS,
-  SUPPORTED_CHAINS,
-  type SupportedChain,
+  SUPPORTED_WALLET_CHAINS,
+  type SupportedWalletChain,
 } from '@/types/chain';
 
 import type { SelectedResource } from '../../_types/chat-config';
@@ -43,7 +43,9 @@ export const ResourceList: React.FC<Props> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [selectedChains, setSelectedChains] = useState<SupportedChain[]>([]);
+  const [selectedChains, setSelectedChains] = useState<SupportedWalletChain[]>(
+    []
+  );
 
   const { data: tools, isLoading } = api.public.tools.search.useQuery({
     search: searchQuery.trim().length > 0 ? searchQuery.trim() : undefined,
@@ -78,7 +80,7 @@ export const ResourceList: React.FC<Props> = ({
       />
       <Filters
         title="Network"
-        items={[...SUPPORTED_CHAINS]}
+        items={[...SUPPORTED_WALLET_CHAINS]}
         isLoading={false}
         onClickItem={chain =>
           setSelectedChains(chains =>

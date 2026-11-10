@@ -4,10 +4,10 @@ import { forbidden } from 'next/navigation';
 import { freeTierWallets } from '@/services/cdp/server-wallet/free-tier';
 import { formatCurrency } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CHAIN_LABELS, SUPPORTED_CHAINS } from '@/types/chain';
+import { CHAIN_LABELS, SUPPORTED_WALLET_CHAINS } from '@/types/chain';
 import { usdc } from '@/lib/tokens/usdc';
 
-import type { SupportedChain } from '@/types/chain';
+import type { SupportedWalletChain } from '@/types/chain';
 
 export default async function FreeTierWalletPage() {
   const session = await auth();
@@ -23,7 +23,7 @@ export default async function FreeTierWalletPage() {
         description="Monitor the balance of the free tier wallet used for subsidizing user transactions."
       />
       <Body>
-        {SUPPORTED_CHAINS.map(chain => (
+        {SUPPORTED_WALLET_CHAINS.map(chain => (
           <ChainWalletInformation chain={chain} key={chain} />
         ))}
       </Body>
@@ -31,7 +31,11 @@ export default async function FreeTierWalletPage() {
   );
 }
 
-const ChainWalletInformation = async ({ chain }: { chain: SupportedChain }) => {
+const ChainWalletInformation = async ({
+  chain,
+}: {
+  chain: SupportedWalletChain;
+}) => {
   const wallet = freeTierWallets[chain];
 
   return (

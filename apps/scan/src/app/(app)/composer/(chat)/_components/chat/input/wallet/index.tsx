@@ -11,7 +11,7 @@ import { WalletDialog } from './dialog';
 import { api } from '@/trpc/client';
 import { WalletChainProvider } from '@/app/(app)/_contexts/wallet-chain/provider';
 
-import type { SupportedChain } from '@/types/chain';
+import type { SupportedWalletChain } from '@/types/chain';
 
 export const WalletButton = () => {
   const { data: session } = useSession();
@@ -39,7 +39,10 @@ export const WalletButton = () => {
     <WalletChainProvider>
       <WalletDialog
         chainsWithBalance={
-          chainsWithBalances as [SupportedChain, ...SupportedChain[]]
+          chainsWithBalances as [
+            SupportedWalletChain,
+            ...SupportedWalletChain[],
+          ]
         }
       >
         <PromptInputButton variant="primaryOutline" size="sm">

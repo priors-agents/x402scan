@@ -17,12 +17,16 @@ import { Chain } from '@/app/(app)/_components/chains';
 
 import { useWalletChain } from './hook';
 
-import { SUPPORTED_CHAINS, CHAIN_LABELS, CHAIN_ICONS } from '@/types/chain';
+import {
+  SUPPORTED_WALLET_CHAINS,
+  CHAIN_LABELS,
+  CHAIN_ICONS,
+} from '@/types/chain';
 
-import type { SupportedChain } from '@/types/chain';
+import type { SupportedWalletChain } from '@/types/chain';
 
 interface Props {
-  options?: SupportedChain[];
+  options?: SupportedWalletChain[];
 }
 
 export const WalletChain: React.FC<Props> = ({ options }) => {
@@ -67,7 +71,7 @@ const WalletChainSelector: React.FC<Props> = ({ options }) => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[140px] p-1">
-        {(options ?? SUPPORTED_CHAINS).map(value => (
+        {(options ?? SUPPORTED_WALLET_CHAINS).map(value => (
           <Button
             key={value}
             variant="ghost"
@@ -76,7 +80,7 @@ const WalletChainSelector: React.FC<Props> = ({ options }) => {
               setChain(value);
               setIsOpen(false);
             }}
-            disabled={!SUPPORTED_CHAINS.includes(value)}
+            disabled={!SUPPORTED_WALLET_CHAINS.includes(value)}
           >
             <Chain chain={value} iconClassName="size-4" />
             {CHAIN_LABELS[value]}
